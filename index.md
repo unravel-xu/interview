@@ -27,7 +27,7 @@ headingDivider: [2,3]
 - [我的思考](#31)
 - [未来打算](#37)
 
-## 引言
+## Part1: 引言
 
 <!-- _class: trans -->
 <!-- _footer: "" -->
@@ -52,18 +52,18 @@ headingDivider: [2,3]
 
 ## 1.2 LLM推理的挑战
 LLM在稳健和可靠推理方面仍面临若干挑战：
-1. LLM的幻觉现象
-2. 缺乏显式记忆
-3. 多步骤推理
-4. 偏见和可解释性问题（Strawberry问题？）
-5. 跨领域的泛化能力有限
+- LLM的幻觉现象
+- 缺乏显式记忆
+- 多步骤推理
+- 偏见和可解释性问题（Strawberry问题？）
+- 跨领域的泛化能力有限
 
 ## 1.3 利用传统AI推理技术
 为了增强LLM的推理能力，最近的研究探索了将传统推理技术与深度学习相结合的混合模型：
-1. 使用结构化推理数据进行微调：在专门的数据集上训练LLM，这些数据集聚焦在逻辑推理和数学问题解决
-2. 检索增强推理：通过知识检索机制增强LLM，使其能够将其响应建立在外部事实上
-3. 神经符号AI：将神经网络和符号推理框架相结合，以利用两种方式的优势
-4. 自监督和强化学习：通过迭代自我训练和奖励机制鼓励模型改进其推理
+- 使用结构化推理数据进行微调：在专门的数据集上训练LLM，这些数据集聚焦在逻辑推理和数学问题解决
+- 检索增强推理：通过知识检索机制增强LLM，使其能够将其响应建立在外部事实上
+- 神经符号AI：将神经网络和符号推理框架相结合，以利用两种方式的优势
+- 自监督和强化学习：通过迭代自我训练和奖励机制鼓励模型改进其推理
 
 ## 1.4 基于Prompt的推理增强
 
@@ -137,13 +137,13 @@ PAL归类在Prompt-based推理增强，因为PAL依赖Prompt设计
 
 ##
 #### 2) RLHF
-1. SFT：$Model_{pre-trained} + Dataset_{SFT}\to Model_{SFT}$
-2. 训练奖励模型RM：RM可以是另一个经过微调的 LM，也可以是根据偏好数据从头开始训练的 LM，$Model_{reward}+Dataset_{human-ranked} \to Model_{trained}$
-3. 用强化学习微调：
-    - Policy：一个接收提示并返回一系列文本（或文本概率分布）的LM
-    - action space：LM的词表对应的所有token
-    - observation space：可能的输入token序列
-    - reward function：是偏好模型和Policy shift constraint的结合
+s1: SFT：$Model_{pre-trained} + Dataset_{SFT}\to Model_{SFT}$
+s2: 训练奖励模型RM：RM可以是另一个经过微调的 LM，也可以是根据偏好数据从头开始训练的 LM，$Model_{reward}+Dataset_{human-ranked} \to Model_{trained}$
+s3: 用强化学习微调：
+  - Policy：一个接收提示并返回一系列文本（或文本概率分布）的LM
+  - action space：LM的词表对应的所有token
+  - observation space：可能的输入token序列
+  - reward function：是偏好模型和Policy shift constraint的结合
 
 ##
 #### 3) 自监督学习（SSL）和对比学习（CL）
@@ -155,7 +155,7 @@ PAL归类在Prompt-based推理增强，因为PAL依赖Prompt设计
 
 在主模型外训练一个Critic model检查主模型的推理步骤，一旦发现不合理之处，就提出警示或要求修改，进而将这类评价结果反馈到训练或推断过程中，实现对主模型推理质量的改进
 
-## LLM reasoning发展
+## Part2: LLM reasoning发展
 
 <!-- _class: trans -->
 <!-- _footer: "" -->
@@ -180,16 +180,16 @@ from：[Learning to summarize from human feedback](https://proceedings.neurips.c
 在Math基准榜单上的表现却超过了多个30B~70B参数量的开源模型
 
 关键因素：
-1. DeepSeek-Math 语料库，这是一个包含 120B 个数学tokens的大规模高质量预训练语料库
-2. GRPO
+Key1: DeepSeek-Math 语料库，这是一个包含 120B 个数学tokens的大规模高质量预训练语料库
+Key2: 使用GRPO
 
 base model：DeepSeek-Coder-Base-V1.5 7B
 
 现象：
-1. Pre-Training阶段
-    - math training在增强model数学能力的同时，还扩大了其**一般推理能力**
-    - code training有利于math reasoning能力的提升
-    - ArXiv论文好像对提高math reasoning无效（未充分研究）
+- Pre-Training阶段
+  - math training在增强model数学能力的同时，还扩大了其**一般推理能力**
+  - code training有利于math reasoning能力的提升
+  - ArXiv论文好像对提高math reasoning无效（未充分研究）
 
 ##
 ![](./images/DeepSeekMathPreTraining.jpg)
@@ -199,18 +199,18 @@ one-stage混合训练可以缓解two-stage训练导致的灾难性遗忘问题�
 ##
 > RL已被证明能够有效地在SFT阶段后进一步提高LLM的math reasoning能力
 
-2. Reinforcement Learning阶段
-    - 提供了一个统一范式来分析不同训练方法：
+- Reinforcement Learning阶段
+  - 提供了一个统一范式来分析不同训练方法：
 
-    $$
-    \text{关于参数}\theta\text{的梯度}: 
-    \nabla_\theta \mathcal{J}_{\mathcal{A}}(\theta)=\mathbb{E}[\underbrace{(q, o) \sim \color{red}\mathcal{D}}_{\text {Data Source }}](\frac{1}{|o|} \sum_{t=1}^{|o|} \underbrace{G C_{\mathcal{A}}\left(q, o, t, {\color{red}\pi_{r f}} \right)}_{\text {Gradient Coefficient }} \nabla_\theta \log \pi_\theta\left(o_t \mid q, o_{t-1}\right))
-    $$
+  $$
+  \text{关于参数}\theta\text{的梯度}: 
+  \nabla_\theta \mathcal{J}_{\mathcal{A}}(\theta)=\mathbb{E}[\underbrace{(q, o) \sim \color{red}\mathcal{D}}_{\text {Data Source }}](\frac{1}{|o|} \sum_{t=1}^{|o|} \underbrace{G C_{\mathcal{A}}\left(q, o, t, {\color{red}\pi_{r f}} \right)}_{\text {Gradient Coefficient }} \nabla_\theta \log \pi_\theta\left(o_t \mid q, o_{t-1}\right))
+  $$
 
-    其中$\pi_{r f}$是奖励函数，是训练奖励信号的来源
+  其中$\pi_{r f}$是奖励函数，是训练奖励信号的来源
 
-    - RL提升了TopK中正确回答的概率，而不是提升了模型的基本能力
-    - 使用WEAK-TO-STRONG对齐方式会为学习算法带来根本性的变化
+  - RL提升了TopK中正确回答的概率，而不是提升了模型的基本能力
+  - 使用WEAK-TO-STRONG对齐方式会为学习算法带来根本性的变化
 
 ## LIMO: Less is More for Reasoning
 
@@ -218,13 +218,13 @@ one-stage混合训练可以缓解two-stage训练导致的灾难性遗忘问题�
 
 > 对于已经预训练了海量知识的 LLM 来说，提升其推理能力的关键，不在于数据的绝对数量，而在于训练数据的质量和模型利用自身知识的方式
 
-- 提供了一个仅包含817个样本的高质量[数据集](https://huggingface.co/datasets/GAIR/LIMO)
+提供了一个仅包含817个样本的高质量[数据集](https://huggingface.co/datasets/GAIR/LIMO)
 
 结论：
-1. 推理链质量越高，模型性能越好
-2. 训练题目难度越高，越能激发模型更深层次的推理能力
-3. 预训练阶段积累的知识越丰富，模型越能有效地利用少量高质量的 LIMO 数据进行学习，从而获得更强大的推理能力
-4. LIMO模型展现出强大的自我反思能力
+- 推理链质量越高，模型性能越好
+- 训练题目难度越高，越能激发模型更深层次的推理能力
+- 预训练阶段积累的知识越丰富，模型越能有效地利用少量高质量的 LIMO 数据进行学习，从而获得更强大的推理能力
+- LIMO模型展现出强大的自我反思能力
 
 ## 
 <img src="./images/deepseekHG.png" height="680">
@@ -322,7 +322,7 @@ DeepSeek-R1-Zero存在模型可读性问题，冷启动方式去重新训练一�
   - 如果采用最大的探索限制，又容易产生局部最优
   - value model 很难训练，不好评估当前的步骤是否是好的
 
-## 我的思考
+## Part3: 我的思考
 
 <!-- _class: trans -->
 <!-- _footer: "" -->
@@ -372,7 +372,7 @@ report: [kimi-k1.5](https://github.com/MoonshotAI/kimi-k1.5)
 实际不管模型中间做错了什么，只要不是重复的，最后模型做对了，就认为这是一个好的探索，值得鼓励。反之，如果模型一顿探索，最后做错了，那么再努力也是错，要惩罚
 > RL训练过程中模型可以自己涌现的：模型会随着训练提升performance也不断增加token数，自然而然的使整个CoT变长
 
-## 未来打算
+## Part4: 未来打算
 
 <!-- _class: trans -->
 <!-- _footer: "" -->

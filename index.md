@@ -244,8 +244,6 @@ one-stage混合训练可以缓解two-stage训练导致的灾难性遗忘问题�
 - 并且需要让模型先思考，然后再问题
 
 ##
-#### 强化学习
-
 ![](./images/PPOvsGRPO.png)
 
 - 减少了 value/critic model，这样可以节约资源，方便 scaling
@@ -253,6 +251,7 @@ one-stage混合训练可以缓解two-stage训练导致的灾难性遗忘问题�
 而在这一步强化学习中，DeepSeek 采用的奖励有两种：
 - 最终结果的精确奖励。模型最终输出的答案是否正确
 - 中间格式的格式奖励。模型是否先输出 `<think>xxx</think>`，然后输出`<answer>xxx</answer>` 这样的格式
+
 
 ##
 #### 启发
@@ -306,12 +305,10 @@ DeepSeek-R1-Zero存在模型可读性问题，冷启动方式去重新训练一�
 
 ## DeepSeek-R1-Distill
 小一点的模型能不能得到类似的 deepseek-r1 的能力？
-
 方式1：直接用 deepseek-r1 蒸馏数据，让小模型学习（SFT）
 方式2：小模型采用 deepseek-r1 同样的 pipeline 作训练，获得这样的能力
-
 结论：从大模型蒸馏的效果好于直接用小模型作RL训练
-
+但[Exploring the Limit of Outcome Reward for Learning Mathematical Reasoning](https://arxiv.org/abs/2502.06781)：强化学习超越蒸馏，在正确样本上模仿学习，在错误样本上偏好学习，对关键步骤做重点学习
 #### 失败
 - Process Reward Model（PRM）
   - 定义一个 PRM 的粒度很难，怎么算是一个 Step 呢？
@@ -320,7 +317,7 @@ DeepSeek-R1-Zero存在模型可读性问题，冷启动方式去重新训练一�
 - Monte Carlo Tree Search（MCTS）
   - 在语言模型中，词表太大了，基本都十几K，因此搜索空间太大了
   - 如果采用最大的探索限制，又容易产生局部最优
-  - value model 很难训练，不好评估当前的步骤是否是好的
+  - value model 很难训练，不好评估当前的状态是否是好的
 
 ## Part3: 我的思考
 
@@ -378,12 +375,87 @@ report: [kimi-k1.5](https://github.com/MoonshotAI/kimi-k1.5)
 <!-- _footer: "" -->
 <!-- _paginate: "" -->
 
+## 可能的改进
+
+[Logic-RL: Unleashing LLM Reasoning with Rule-Based Reinforcement Learning](https://arxiv.org/abs/2502.14768)
+[Process Reinforcement through Implicit Rewards](https://arxiv.org/abs/2502.01456)
+
+REINFORCE++ 在训练稳定性上优于 GRPO 并且比 PPO 更快
+
+#### PPO in LLM
+
+- Actor/Policy Model：agent
+- Critic/Value Model：$V_{\pi}(t)$ 
+- Reward Model：$R_{t+1}$
+- Reference Model：$Q_{\pi}(s_{t}, a_{t})$
+- action: $a_{t}=token_{t+1}$ 
+- state: $s_{t}={token_{1},\dots,token_{t}}$
+
 ##
-- 聚焦于小模型reasoning能力的提升
-- LongCoT能否换为LongToT？
-- dataset也至关重要
-- 小模型reasoning能力为什么通过蒸馏更能激发？
-- ……
+![](./images/OPENRLHF.png)
+
+## 计划
+
+dataset：层次级训练reasoning，从易到难/从难到易，依reasoning类别训练
+
+RL：action现在是一个个token
+
+跳出token，考虑简单数学问题：
+
+$$
+\begin{aligned}
+& A \to B \\
+& B \to C \\
+& A \to C \\
+\end{aligned}
+$$
+从Question中抽象出A，B，C和Question类型
+- action：$A\to B$（reasoning方式）
+- state: 已知的A，B，C
+
+## PRM
+![](./images/PRM.png)
+
+## 
+[The Lessons of Developing Process Reward Models in Mathematical Reasoning](https://arxiv.org/abs/2501.07301)
+LLM-as-a-judge直接评估当前步骤的逻辑性和正确性，而不需要依赖后续步骤的补全结果
+
+> 硬标签 (hard label) 比软标签 (soft label) 更适合 PRM 的训练
+
+在 PRM 的训练中，每个步骤的正确性应该是一个确定的状态，要么正确，要么错误
+
+硬标签直接将步骤标记为正确或错误，能够更好地反映步骤的真实状态
+
+软标签则将步骤的正确性表示为一个概率值，代表的是未来达到正确答案的可能性，这引入了不确定性。 这与 PRM 本质上需要确定性结果的要求不符
+
+此外，软标签的数值是通过 MC 估计得到的，本身就带有噪音，如果直接使用软标签，就可能进一步降低模型的效果
+
+## ORM
+
+[Exploring the Limit of Outcome Reward for Learning Mathematical Reasoning](https://arxiv.org/pdf/2502.06781)
+
+OREAL框架
+
+## CoT
+
+[THE RELATIONSHIP BETWEEN REASONING AND PERFORMANCE IN LARGE LANGUAGE MODELS—O3 (MINI) THINKS HARDER, NOT LONGER](https://arxiv.org/pdf/2502.15631)
+
+benchmark: Omni-Math
+
+1. 更长的推理链并不总是带来更高的准确率
+  - 推理链越长，错误传播的可能性越大
+  - 问题难度和推理深度的错误匹配：模型可能在无法解决的问题上浪费过多的推理资源
+2. 更高性能的模型无需更长的推理链
+3. 推理链长度的边际收益递减：o3-mini(high)在准确率上略有提升，但代价是显著增加开销
+
+**推理链如何优化，使得在保证准确率的前提下，最小化token**
+
+## 
+
+[rStar-Math: Small LLMs Can Master Math Reasoning with Self-Evolved Deep Thinking](https://arxiv.org/abs/2501.04519)
+![](./images/rStar.png)
+过程偏好模型（PPM）训练：引入正负样本配对的方式（pairwise preference），只要能把「更好步骤」和「更差步骤」区分开就足够训练出一个好的 PPM。它不需要精确的数字评分，只需要知道在同样前提下，哪个中间步骤更可能走向正确解答
+四轮自我进化（Self-Evolution）：先用开源的大模型（如 DeepSeek-Coder-Instruct）进行初始单轮推理生成数据，然后基于自己训练出的 7B 模型反复堆叠增强，每轮在 MCTS 中取得更优质的数据，用于 SFT（监督微调）策略模型和更新 PPM，从而让小模型在持续迭代中解决更多困难问题
 
 ## Thanks
 

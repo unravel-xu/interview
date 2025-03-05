@@ -22,12 +22,32 @@ headingDivider: [2,3]
 <!-- _header: "CONTENTS" -->
 <!-- _paginate: "" -->
 
-- [引言](#3)
-- [LLM reasoning发展](#14) 
-- [我的思考](#31)
-- [未来打算](#37)
+- [过去的工作](#3)
+- [引言](#6)
+- [LLM reasoning发展](#17) 
+- [我的思考](#32)
+- [未来打算](#38)
 
-## Part1: 引言
+## Part1: 过去的工作
+
+<!-- _class: trans -->
+<!-- _footer: "" -->
+<!-- _paginate: "" -->
+
+## 
+
+####
+trace $\to$ RAG
+
+<img align="left" src="./images/GPT.png"> the information you know:\n\n\n\nthe issues you know:\nthe description of HBASE-23079 is 结构化描述issue, issues' description and summary mentioned above, respond to the user's question concisely and professionally with \"yes\" or \"no\". If the answer cannot be derived from the information provided, please state \"Unable to answer the question based on the known information\" or \"Insufficient relevant information provided\". It is not allowed to add fabricated content in the response.\n\nThe question is: Is there any error propagation in HBASE-23079?
+
+##
+<img src="./images/Re.png" width="80%">
+
+&emsp; &emsp; &emsp; &emsp; Qlora + multi-thread报错 &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; lora + multi-thread不报错
+
+
+## Part2: 引言
 
 <!-- _class: trans -->
 <!-- _footer: "" -->
@@ -155,7 +175,7 @@ s3: 用强化学习微调：
 
 在主模型外训练一个Critic model检查主模型的推理步骤，一旦发现不合理之处，就提出警示或要求修改，进而将这类评价结果反馈到训练或推断过程中，实现对主模型推理质量的改进
 
-## Part2: LLM reasoning发展
+## Part3: LLM reasoning发展
 
 <!-- _class: trans -->
 <!-- _footer: "" -->
@@ -225,13 +245,6 @@ one-stage混合训练可以缓解two-stage训练导致的灾难性遗忘问题�
 - 训练题目难度越高，越能激发模型更深层次的推理能力
 - 预训练阶段积累的知识越丰富，模型越能有效地利用少量高质量的 LIMO 数据进行学习，从而获得更强大的推理能力
 - LIMO模型展现出强大的自我反思能力
-
-## 
-<img src="./images/deepseekHG.png" height="680">
-
-##
-<img src="./images/deepseekALL.png" height="680">
-
 ## DeepSeek-R1-Zero
 
 在 Base Model （DeepSeek-V3）中直接采用强化学习（GRPO）的方式做模型训练，其中 RL 部分的 Reward 采用的精确的奖励（Accuracy Reward）
@@ -319,7 +332,7 @@ DeepSeek-R1-Zero存在模型可读性问题，冷启动方式去重新训练一�
   - 如果采用最大的探索限制，又容易产生局部最优
   - value model 很难训练，不好评估当前的状态是否是好的
 
-## Part3: 我的思考
+## Part4: 我的思考
 
 <!-- _class: trans -->
 <!-- _footer: "" -->
@@ -369,7 +382,7 @@ report: [kimi-k1.5](https://github.com/MoonshotAI/kimi-k1.5)
 实际不管模型中间做错了什么，只要不是重复的，最后模型做对了，就认为这是一个好的探索，值得鼓励。反之，如果模型一顿探索，最后做错了，那么再努力也是错，要惩罚
 > RL训练过程中模型可以自己涌现的：模型会随着训练提升performance也不断增加token数，自然而然的使整个CoT变长
 
-## Part4: 未来打算
+## Part5: 未来打算
 
 <!-- _class: trans -->
 <!-- _footer: "" -->
